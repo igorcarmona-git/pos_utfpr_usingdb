@@ -1,6 +1,7 @@
 package com.example.pos_utfpr_usingdb
 
 import android.content.ContentValues
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -9,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityMainBinding
+import com.example.pos_utfpr_usingdb.views.ListarActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -92,15 +94,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btList.setOnClickListener {
-            val registers = cadastroHandler.listar()
-            if (registers.isNotEmpty()) {
-                val displayText = registers.joinToString("\n") {
-                    "Cod: ${it.cod}, Nome: ${it.nome}, Tel: ${it.cellphone}"
-                }
-                Toast.makeText(this, displayText, Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Nenhum registro encontrado", Toast.LENGTH_SHORT).show()
-            }
+            val intent = Intent(this, ListarActivity::class.java)
+            startActivity(intent)
         }
     }
 

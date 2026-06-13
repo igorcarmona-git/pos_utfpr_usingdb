@@ -2,6 +2,7 @@ package com.example.pos_utfpr_usingdb.database.classes
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import com.example.pos_utfpr_usingdb.database.DatabaseHandler
 import com.example.pos_utfpr_usingdb.entity.Cadastro
@@ -35,6 +36,11 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
         }
         cursor.close()
         return registers
+    }
+
+    fun listarCursor(): Cursor {
+        val db = this.readableDatabase
+        return db.query("cadastro", null, null, null, null, null, null)
     }
 
     fun pesquisar(cod: String): Cadastro? {
