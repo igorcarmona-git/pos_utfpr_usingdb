@@ -15,11 +15,11 @@
 
     <EditText
         android:id="@+id/etCod"
-        android:labelFor="@id/etCod"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autofillHints="Código"
-        android:inputType="number" />
+        android:inputType="number"
+        android:labelFor="@id/etCod" />
 
     <TextView
         android:id="@+id/tv_name"
@@ -48,12 +48,16 @@
         android:inputType="phone" />
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/bt_incluir"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -61,6 +65,7 @@
 
         <Button
             android:id="@+id/bt_update"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -68,13 +73,23 @@
 
         <Button
             android:id="@+id/bt_delete"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/deletar" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/bt_search"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -82,10 +97,10 @@
 
         <Button
             android:id="@+id/bt_list"
-            android:layout_width="wrap_content"
+            style="?android:attr/buttonBarButtonStyle" android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/listar" />
     </LinearLayout>
-    
+
 </LinearLayout>

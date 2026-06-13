@@ -1,22 +1,18 @@
 package com.example.pos_utfpr_usingdb
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var db: SQLiteDatabase
-
-    companion object {
-        private const val DB_NAME = "banco.db"
-    }
+    private lateinit var cadastroHandler: CadastroHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,118 +25,105 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        db = SQLiteDatabase.openOrCreateDatabase(this.getDatabasePath(DB_NAME), null)
-
+        cadastroHandler = CadastroHandler(this)
         setupListeners()
-
-        db.execSQL(buildString {
-            append("CREATE TABLE IF NOT EXISTS ")
-            append("cadastro(_id INTEGER PRIMARY KEY AUTOINCREMENT, cod TEXT, nome TEXT, cellphone TEXT)")
-        })
     }
-
 
     private fun setupListeners() {
         binding.btIncluir.setOnClickListener {
-            val values = ContentValues().apply {
-                put("cod", binding.etCod.text.toString())
-                put("nome", binding.etNome.text.toString())
-                put("cellphone", binding.etCellphone.text.toString())
+            if (validateFields()) {
+                val values = getContentValues()
+                val result = cadastroHandler.incluirCadastro(values)
+
+                if (result != -1L) {
+                    Toast.makeText(this, "Inserido com sucesso!", Toast.LENGTH_SHORT).show()
+                    clearFields()
+                } else {
+                    Toast.makeText(this, "Erro ao inserir!", Toast.LENGTH_SHORT).show()
+                }
             }
-            incluir("cadastro", values)
         }
+
         binding.btUpdate.setOnClickListener {
-            val values = ContentValues().apply {
-                put("cod", binding.etCod.text.toString())
-                put("nome", binding.etNome.text.toString())
-                put("cellphone", binding.etCellphone.text.toString())
+            val cod = binding.etCod.text.toString()
+            if (cod.isEmpty()) {
+                Toast.makeText(this, "Informe o código para alterar!", Toast.LENGTH_SHORT).show()
+            } else if (validateFields()) {
+                val values = getContentValues()
+                val result = cadastroHandler.alterarCadastro(values, cod)
+
+                if (result > 0) {
+                    Toast.makeText(this, "Alterado com sucesso!", Toast.LENGTH_SHORT).show()
+                    clearFields()
+                } else {
+                    Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
+                }
             }
-            alterar("cadastro", values)
         }
+
         binding.btDelete.setOnClickListener {
-            deletar("cadastro", binding.etCod.text.toString())
+            val cod = binding.etCod.text.toString()
+            if (cod.isEmpty()) {
+                Toast.makeText(this, "Informe o código para deletar!", Toast.LENGTH_SHORT).show()
+            } else {
+                val result = cadastroHandler.deletarCadastro(cod)
+                if (result > 0) {
+                    Toast.makeText(this, "Deletado com sucesso!", Toast.LENGTH_SHORT).show()
+                    clearFields()
+                } else {
+                    Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+
         binding.btSearch.setOnClickListener {
-            pesquisar()
+            val cod = binding.etCod.text.toString()
+            if (cod.isEmpty()) {
+                Toast.makeText(this, "Informe o código para pesquisar!", Toast.LENGTH_SHORT).show()
+            } else {
+                val cadastro = cadastroHandler.pesquisar(cod)
+                if (cadastro != null) {
+                    binding.etNome.setText(cadastro.nome)
+                    binding.etCellphone.setText(cadastro.cellphone)
+                } else {
+                    Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+
         binding.btList.setOnClickListener {
-            listar()
+            val registers = cadastroHandler.listar()
+            if (registers.isNotEmpty()) {
+                val displayText = registers.joinToString("\n") {
+                    "Cod: ${it.cod}, Nome: ${it.nome}, Tel: ${it.cellphone}"
+                }
+                Toast.makeText(this, displayText, Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Nenhum registro encontrado", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    private fun listar() {
-        val cursor = db.query("cadastro", null, null, null, null, null, null)
-        val registers = StringBuilder()
-        
-        if (cursor.moveToFirst()) {
-            do {
-                val cod = cursor.getString(cursor.getColumnIndexOrThrow("cod"))
-                val nome = cursor.getString(cursor.getColumnIndexOrThrow("nome"))
-                val cellphone = cursor.getString(cursor.getColumnIndexOrThrow("cellphone"))
-                registers.append("Cod: $cod, Nome: $nome, Cellphone: $cellphone\n")
-            } while (cursor.moveToNext())
-            
-            Toast.makeText(this, registers.toString(), Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Nenhum registro encontrado", Toast.LENGTH_SHORT).show()
+    // ----------------------------------------- HELPERS ------------------------------------------
+    private fun validateFields(): Boolean {
+        if (binding.etCod.text.isEmpty() || binding.etNome.text.isEmpty() || binding.etCellphone.text.isEmpty()) {
+            Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+            return false
         }
-        cursor.close()
+        return true
     }
 
-    private fun pesquisar() {
-        val cursor = db.query(
-            "cadastro",
-            null,
-            "cod = ?",
-            arrayOf(binding.etCod.text.toString()),
-            null,
-            null,
-            null
-        )
-
-        if (cursor.moveToFirst()) {
-            binding.etNome.setText(cursor.getString(cursor.getColumnIndexOrThrow("nome")))
-            binding.etCellphone.setText(cursor.getString(cursor.getColumnIndexOrThrow("cellphone")))
-        } else {
-            Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
-        }
-        cursor.close()
-    }
-
-    private fun deletar(tableName: String, cod: String) {
-        val result = db.delete(tableName, "cod = ?", arrayOf(cod))
-        if (result > 0) {
-            Toast.makeText(this, "Deletado com sucesso!", Toast.LENGTH_SHORT).show()
-            binding.etCod.text.clear()
-            binding.etNome.text.clear()
-            binding.etCellphone.text.clear()
-        } else {
-            Toast.makeText(this, "Erro ao deletar ou registro não encontrado!", Toast.LENGTH_SHORT).show()
+    private fun getContentValues(): ContentValues {
+        return ContentValues().apply {
+            put("cod", binding.etCod.text.toString())
+            put("nome", binding.etNome.text.toString())
+            put("cellphone", binding.etCellphone.text.toString())
         }
     }
 
-    private fun alterar(tableName: String, values: ContentValues) {
-        val cod = binding.etCod.text.toString()
-        val result = db.update(tableName, values, "cod = ?", arrayOf(cod))
-        if (result > 0) {
-            Toast.makeText(this, "Alterado com sucesso!", Toast.LENGTH_SHORT).show()
-            binding.etCod.text.clear()
-            binding.etNome.text.clear()
-            binding.etCellphone.text.clear()
-        } else {
-            Toast.makeText(this, "Erro ao alterar ou registro não encontrado!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun incluir(tableName: String, values: ContentValues) {
-        val result = db.insert(tableName, null, values)
-        if (result != -1L) {
-            Toast.makeText(this, "Inserido com sucesso!", Toast.LENGTH_SHORT).show()
-            binding.etCod.text.clear()
-            binding.etNome.text.clear()
-            binding.etCellphone.text.clear()
-        } else {
-            Toast.makeText(this, "Erro ao inserir!", Toast.LENGTH_SHORT).show()
-        }
+    private fun clearFields() {
+        binding.etCod.text.clear()
+        binding.etNome.text.clear()
+        binding.etCellphone.text.clear()
     }
 }
