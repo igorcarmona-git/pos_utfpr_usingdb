@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pos_utfpr_usingdb.adapters.ElementoImageListAdapter
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityListarBinding
 
@@ -29,17 +30,13 @@ class ListarActivity : AppCompatActivity() {
     }
 
     private fun exibirLista() {
-        // Exibir a lista de cadastros no ListView vindo do db
-        val cadastros = cadastroHandler.listarCursor()
+        // Busca os dados reais do banco
+        val cadastros = cadastroHandler.listar()
 
-        // Configurar o adaptador para exibir os dados no ListView usando um layout simples de texto
-        val adapter = SimpleCursorAdapter(
+        // Configurar o adaptador customizado que criamos
+        val adapter = ElementoImageListAdapter(
             this,
-            android.R.layout.simple_list_item_2,
-            cadastros,
-            arrayOf("cod","nome"),
-            intArrayOf(android.R.id.text1, android.R.id.text2),
-            0
+            cadastros
         )
         
         binding.lvCadastro.adapter = adapter

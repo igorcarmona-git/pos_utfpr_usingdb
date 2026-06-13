@@ -8,4 +8,6 @@
     <string name="deletar">Deletar</string>
     <string name="pesquisar">Pesquisar</string>
     <string name="listar">Listar</string>
+    <string name="person_avatar">Person Avatar</string>
+    <string name="edit_icon_button">Edit Icon Button</string>
 </resources>
