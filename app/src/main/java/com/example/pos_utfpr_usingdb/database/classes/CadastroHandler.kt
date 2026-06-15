@@ -38,11 +38,6 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
         return registers
     }
 
-    fun listarCursor(): Cursor {
-        val db = this.readableDatabase
-        return db.query("cadastro", null, null, null, null, null, null)
-    }
-
     fun pesquisar(cod: String): Cadastro? {
         val db = this.readableDatabase
         val cursor = db.query(
