@@ -24,6 +24,8 @@ abstract class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_
         return db.delete(tableName, whereClause, whereArgs)
     }
 
+    //Sempre que for inserir uma nova coluna numa tabela, é necessário atualizar o DB_VERSION
+    // para que o onUpgrade seja chamado e a tabela, seja atualizada
     companion object {
         const val DB_NAME = "banco.db"
         const val DB_VERSION = 1
