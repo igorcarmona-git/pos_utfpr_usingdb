@@ -8,18 +8,18 @@ import android.database.sqlite.SQLiteOpenHelper
 abstract class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
     abstract override fun onUpgrade(db: SQLiteDatabase?, oldDBVersion: Int, newDBVersion: Int)
 
-    fun dbIncluir(tableName: String, values: ContentValues): Long {
+    fun dbInsert(tableName: String, values: ContentValues): Long {
         val db = this.writableDatabase
         return db.insert(tableName, null, values)
     }
 
-    fun dbAlterar(tableName: String, values: ContentValues, whereClause: String, whereArgs:
+    fun dbUpdate(tableName: String, values: ContentValues, whereClause: String, whereArgs:
     Array<String>): Int {
         val db = this.writableDatabase
         return db.update(tableName, values, whereClause, whereArgs)
     }
 
-    fun dbDeletar(tableName: String, whereClause: String, whereArgs: Array<String>): Int {
+    fun dbDelete(tableName: String, whereClause: String, whereArgs: Array<String>): Int {
         val db = this.writableDatabase
         return db.delete(tableName, whereClause, whereArgs)
     }

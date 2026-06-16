@@ -1,7 +1,7 @@
 package com.example.pos_utfpr_usingdb.views
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.SimpleCursorAdapter
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -19,26 +19,37 @@ class ListarActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityListarBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
             insets
         }
 
         cadastroHandler = CadastroHandler(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
         exibirLista()
     }
 
     private fun exibirLista() {
-        // Busca os dados reais do banco
-        val cadastros = cadastroHandler.listar()
+        val cadastros = cadastroHandler.list()
 
-        // Configurar o adaptador customizado que criamos
         val adapter = ElementoImageListAdapter(
-            this,
-            cadastros
-        )
-        
+            context = this,
+            elements = cadastros
+        ) { cadastro, _ ->
+            val intent = Intent(this, CadastroActivity::class.java)
+            intent.putExtra(CadastroActivity.EXTRA_CADASTRO_ID, cadastro.id)
+            startActivity(intent)
+        }
+
         binding.lvCadastro.adapter = adapter
     }
 }

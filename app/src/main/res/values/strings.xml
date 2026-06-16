@@ -10,4 +10,10 @@
     <string name="listar">Listar</string>
     <string name="person_avatar">Person Avatar</string>
     <string name="edit_icon_button">Edit Icon Button</string>
+    <string name="novo_cadastro">Novo cadastro</string>
+    <string name="nome_do_cadastro">Nome do cadastro</string>
+    <string name="celular_do_cadastro">Celular do cadastro</string>
+    <string name="salvar">Salvar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="splash_screen">Splash Screen</string>
 </resources>

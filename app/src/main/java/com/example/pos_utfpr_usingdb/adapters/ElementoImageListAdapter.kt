@@ -5,58 +5,63 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import com.example.pos_utfpr_usingdb.R
+import com.example.pos_utfpr_usingdb.databinding.ElementoImageListviewBinding
 import com.example.pos_utfpr_usingdb.entity.Cadastro
 
-class ElementoImageListAdapter(val context: Context, val elements: MutableList<Cadastro>):
-    BaseAdapter() {
-    //retorna a quantidade de elementos da lista
+class ElementoImageListAdapter(
+    context: Context,
+    private val elements: MutableList<Cadastro>,
+    private val onEditClick: (Cadastro, Int) -> Unit
+) : BaseAdapter() {
+    private val inflater = LayoutInflater.from(context)
+
     override fun getCount(): Int {
         return elements.size
     }
 
-    //retorna o elemento da lista na posição especificada
-    override fun getItem(pos: Int): Any {
-        return elements[pos]
+    override fun getItem(position: Int): Cadastro {
+        return elements[position]
     }
 
-    //retorna o ‘id’ do elemento da lista na posição especificada
     override fun getItemId(position: Int): Long {
         return elements[position].id.toLong()
     }
 
-    //retorna a ‘view’ da lista na posição especificada
     override fun getView(
-        pos: Int,
-        componentOrigin: View?,
-        rootComponent: ViewGroup?
+        position: Int,
+        convertView: View?,
+        parent: ViewGroup?
     ): View {
-        val inflater = LayoutInflater.from(context)
-        val v = componentOrigin ?: inflater.inflate(R.layout.elemento_image_listview, rootComponent, false)
+        val binding: ElementoImageListviewBinding
+        val view: View
 
-        val tvNome = v.findViewById<TextView>(R.id.tv_nomeElementoLista)
-        val tvCell = v.findViewById<TextView>(R.id.tv_cellElementoLista)
-        val ivAvatar = v.findViewById<ImageView>(R.id.iv_avatar)
-        val btEditButton = v.findViewById<ImageButton>(R.id.bt_editElementoLista)
-
-        val item = elements[pos]
-        tvNome.text = item.nome
-        tvCell.text = item.cellphone
-
-        if(pos % 2 == 0) {
-            ivAvatar.setImageResource(android.R.drawable.star_big_on)
-        }else{
-            ivAvatar.setImageResource(R.drawable.ic_avatar)
+        if (convertView == null) {
+            binding = ElementoImageListviewBinding.inflate(inflater, parent, false)
+            view = binding.root
+            view.tag = binding
+        } else {
+            view = convertView
+            binding = view.tag as ElementoImageListviewBinding
         }
 
-        btEditButton.setOnClickListener {
-            Toast.makeText(context, "Editando item na posição: $pos", Toast.LENGTH_SHORT).show()
+        val item = getItem(position)
+
+        binding.tvNomeElementoLista.text = item.nome
+        binding.tvCellElementoLista.text = item.cellphone
+
+        val avatarResource = if (position % 2 == 0) {
+            android.R.drawable.star_big_on
+        } else {
+            R.drawable.ic_avatar
         }
 
-        return v
+        binding.ivAvatar.setImageResource(avatarResource)
+
+        binding.btEditElementoLista.setOnClickListener {
+            onEditClick(item, position)
+        }
+
+        return view
     }
 }
