@@ -33,9 +33,7 @@ class MainActivity : AppCompatActivity() {
         binding.btUpdate.setOnClickListener {
             val cod = binding.etCod.text.toString().trim()
             if (Utils.validateFields(
-                    this,
-                    binding.etNome,
-                    binding.etCellphone
+                    this, binding.etNome, binding.etCellphone
                 )
             ) {
                 val values = Utils.getContentValues(

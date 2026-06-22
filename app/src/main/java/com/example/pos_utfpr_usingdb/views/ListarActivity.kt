@@ -14,6 +14,7 @@ class ListarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListarBinding
     private lateinit var cadastroHandler: CadastroHandler
 
+    //onCreate -> Cria os componentes visuais
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,15 +23,10 @@ class ListarActivity : AppCompatActivity() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
+                systemBars.left, systemBars.top, systemBars.right, systemBars.bottom
             )
             insets
         }
-
-        cadastroHandler = CadastroHandler(this)
 
         binding.btIncluir.setOnClickListener {
             val intent = Intent(this, CadastroActivity::class.java)
@@ -38,17 +34,23 @@ class ListarActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        exibirLista()
+    //onStart -> Carrega os dados para os componentes visuais
+    override fun onStart() {
+        super.onStart()
+        cadastroHandler = CadastroHandler(this)
+        showList()
     }
 
-    private fun exibirLista() {
+    // Ao retornar para esta tela após ela ter passado pelo onStop,
+    // o onResume é executado novamente e atualiza a lista exibida.
+
+    // onResume -> Interatividade da tela, toca a música do jogo, etc.
+
+    private fun showList() {
         val cadastros = cadastroHandler.list()
 
         val adapter = ElementoImageListAdapter(
-            context = this,
-            elements = cadastros
+            context = this, elements = cadastros
         ) { cadastro, _ ->
             val intent = Intent(this, CadastroActivity::class.java)
             intent.putExtra(CadastroActivity.EXTRA_CADASTRO_ID, cadastro.id)

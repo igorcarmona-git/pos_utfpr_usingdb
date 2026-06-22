@@ -21,13 +21,10 @@ class CadastroActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
+                systemBars.left, systemBars.top, systemBars.right, systemBars.bottom
             )
             insets
         }
@@ -87,9 +84,7 @@ class CadastroActivity : AppCompatActivity() {
         }
 
         val cadastro = Cadastro(
-            id = cadastroId ?: 0,
-            nome = nome,
-            cellphone = cellphone
+            id = cadastroId ?: 0, nome = nome, cellphone = cellphone
         )
 
         if (cadastroId == null) {

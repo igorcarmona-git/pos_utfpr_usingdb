@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.pos_utfpr_usingdb"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.pos_utfpr_usingdb"
         minSdk = 26
-        targetSdk = 37
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

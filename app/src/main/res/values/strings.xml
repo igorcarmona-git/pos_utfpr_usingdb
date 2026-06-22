@@ -16,4 +16,5 @@
     <string name="salvar">Salvar</string>
     <string name="cancelar">Cancelar</string>
     <string name="splash_screen">Cadastro de Pessoas</string>
+    <string name="adicionar_novo_cadastro">Adicionar novo cadastro</string>
 </resources>

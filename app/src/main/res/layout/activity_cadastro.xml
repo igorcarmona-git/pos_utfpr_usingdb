@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    tools:context=".views.CadastroActivity">
 
     <TextView
         android:id="@+id/tv_tituloTela"
@@ -19,16 +21,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:autofillHints="etNomeRegister" android:hint="@string/nome_do_cadastro"
-        android:inputType="textPersonName" />
+        android:autofillHints="etNomeRegister"
+        android:hint="@string/nome_do_cadastro"
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
 
     <EditText
         android:id="@+id/etCellphone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:autofillHints="Celular do cadastro" android:hint="@string/celular_do_cadastro"
-        android:inputType="phone" />
+        android:autofillHints="Celular do cadastro"
+        android:hint="@string/celular_do_cadastro"
+        android:inputType="phone"
+        android:minHeight="48dp"
+        android:textColorHint="#546E7A" />
 
     <Button
         android:id="@+id/bt_salvar"
@@ -42,5 +49,4 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/cancelar" />
-
 </LinearLayout>

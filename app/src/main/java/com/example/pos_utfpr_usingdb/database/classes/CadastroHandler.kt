@@ -36,13 +36,7 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
     fun search(cod: String): Cadastro? {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_NAME,
-            null,
-            "$COL_COD = ?",
-            arrayOf(cod),
-            null,
-            null,
-            null
+            TABLE_NAME, null, "$COL_COD = ?", arrayOf(cod), null, null, null
         )
 
         var cadastro: Cadastro? = null
@@ -56,13 +50,7 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
     fun findById(id: Int): Cadastro? {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_NAME,
-            null,
-            "$COL_ID = ?",
-            arrayOf(id.toString()),
-            null,
-            null,
-            null
+            TABLE_NAME, null, "$COL_ID = ?", arrayOf(id.toString()), null, null, null
         )
 
         var cadastro: Cadastro? = null
@@ -112,8 +100,10 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
         )
     }
 
-    private fun contentValuesRegister(cadastro: Cadastro, incluirCod: Boolean = true):
-            ContentValues {
+    private fun contentValuesRegister(
+        cadastro: Cadastro,
+        incluirCod: Boolean = true
+    ): ContentValues {
         return ContentValues().apply {
             if (incluirCod) {
                 put(COL_COD, cadastro.cod)

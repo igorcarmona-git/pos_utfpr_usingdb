@@ -5,7 +5,8 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
-abstract class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
+abstract class DatabaseHandler(context: Context) :
+    SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
     abstract override fun onUpgrade(db: SQLiteDatabase?, oldDBVersion: Int, newDBVersion: Int)
 
     fun dbInsert(tableName: String, values: ContentValues): Long {
@@ -13,8 +14,9 @@ abstract class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DB_
         return db.insert(tableName, null, values)
     }
 
-    fun dbUpdate(tableName: String, values: ContentValues, whereClause: String, whereArgs:
-    Array<String>): Int {
+    fun dbUpdate(
+        tableName: String, values: ContentValues, whereClause: String, whereArgs: Array<String>
+    ): Int {
         val db = this.writableDatabase
         return db.update(tableName, values, whereClause, whereArgs)
     }
