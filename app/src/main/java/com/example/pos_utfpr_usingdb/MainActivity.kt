@@ -1,6 +1,5 @@
 package com.example.pos_utfpr_usingdb
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -10,7 +9,6 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityMainBinding
 import com.example.pos_utfpr_usingdb.utils.Utils
-import com.example.pos_utfpr_usingdb.views.ListarActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -32,41 +30,36 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.btIncluir.setOnClickListener {
-            if (Utils.validateFields(this, binding.etCod, binding.etNome, binding.etCellphone)) {
-                val values = Utils.getContentValues(
-                    "cod" to binding.etCod.text.toString().trim(),
-                    "nome" to binding.etNome.text.toString().trim(),
-                    "cellphone" to binding.etCellphone.text.toString().trim()
-                )
-                val result = cadastroHandler.incluirCadastro(values)
-
-                if (result != -1L) {
-                    Toast.makeText(this, "Inserido com sucesso!", Toast.LENGTH_SHORT).show()
-                    Utils.clearFields(binding.etCod, binding.etNome, binding.etCellphone)
-                } else {
-                    Toast.makeText(this, "Erro ao inserir!", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
         binding.btUpdate.setOnClickListener {
             val cod = binding.etCod.text.toString().trim()
-            if (cod.isEmpty()) {
-                Toast.makeText(this, "Informe o código para alterar!", Toast.LENGTH_SHORT).show()
-            } else if (Utils.validateFields(this, binding.etCod, binding.etNome, binding.etCellphone)) {
+            if (Utils.validateFields(
+                    this,
+                    binding.etNome,
+                    binding.etCellphone
+                )
+            ) {
                 val values = Utils.getContentValues(
-                    "cod" to binding.etCod.text.toString().trim(),
+                    "cod" to cod,
                     "nome" to binding.etNome.text.toString().trim(),
                     "cellphone" to binding.etCellphone.text.toString().trim()
                 )
-                val result = cadastroHandler.alterarCadastro(values, cod)
 
-                if (result > 0) {
-                    Toast.makeText(this, "Alterado com sucesso!", Toast.LENGTH_SHORT).show()
-                    Utils.clearFields(binding.etCod, binding.etNome, binding.etCellphone)
+                if (cod.isEmpty()) {
+                    val result = cadastroHandler.incluirCadastro(values)
+                    if (result > 0) {
+                        Toast.makeText(this, "Incluído com sucesso!", Toast.LENGTH_SHORT).show()
+                        Utils.clearFields(binding.etCod, binding.etNome, binding.etCellphone)
+                    } else {
+                        Toast.makeText(this, "Erro ao incluir!", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
+                    val result = cadastroHandler.alterarCadastro(values, cod)
+                    if (result > 0) {
+                        Toast.makeText(this, "Alterado com sucesso!", Toast.LENGTH_SHORT).show()
+                        Utils.clearFields(binding.etCod, binding.etNome, binding.etCellphone)
+                    } else {
+                        Toast.makeText(this, "Registro não encontrado!", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -101,10 +94,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.btList.setOnClickListener {
-            val intent = Intent(this, ListarActivity::class.java)
-            startActivity(intent)
-        }
     }
 
 }

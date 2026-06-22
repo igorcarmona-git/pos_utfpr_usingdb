@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pos_utfpr_usingdb.views.ListarActivity
 
 class SplashScreenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         // serve para executar um código após um tempo, na thread principal da ‘interface’ do Android
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, ListarActivity::class.java)
             startActivity(intent)
             finish() // Finaliza a SplashScreenActivity após rodar pela primeira vez
         }, 3000)

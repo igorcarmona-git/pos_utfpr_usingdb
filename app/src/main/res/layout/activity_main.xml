@@ -4,8 +4,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_margin="20dp"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <TextView
@@ -57,14 +57,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/bt_incluir"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/incluir" />
-
-        <Button
             android:id="@+id/bt_update"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
@@ -96,12 +88,6 @@
             android:layout_gravity="center"
             android:text="@string/pesquisar" />
 
-        <Button
-            android:id="@+id/bt_list"
-            style="?android:attr/buttonBarButtonStyle" android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/listar" />
     </LinearLayout>
 
 </LinearLayout>

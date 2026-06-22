@@ -31,6 +31,11 @@ class ListarActivity : AppCompatActivity() {
         }
 
         cadastroHandler = CadastroHandler(this)
+
+        binding.btIncluir.setOnClickListener {
+            val intent = Intent(this, CadastroActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {

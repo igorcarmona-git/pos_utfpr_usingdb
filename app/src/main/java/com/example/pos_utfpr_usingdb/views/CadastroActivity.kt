@@ -1,6 +1,5 @@
 package com.example.pos_utfpr_usingdb.views
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
