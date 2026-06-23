@@ -1,0 +1,3 @@
+<resources>
+    <dimen name="dialog_input_min_height">48dp</dimen>
+</resources>
