@@ -1,14 +1,17 @@
 package com.example.pos_utfpr_usingdb.views
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pos_utfpr_usingdb.R
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityCadastroBinding
 import com.example.pos_utfpr_usingdb.entity.Cadastro
+import com.example.pos_utfpr_usingdb.utils.MaskUtil
 
 class CadastroActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCadastroBinding
@@ -39,16 +42,17 @@ class CadastroActivity : AppCompatActivity() {
         val id = intent.getIntExtra(EXTRA_CADASTRO_ID, -1)
 
         if (id <= 0) {
-            binding.tvTituloTela.text = "Novo cadastro"
+            binding.tvTituloTela.setText(R.string.novo_cadastro)
+            binding.btDelete.visibility = View.GONE
             return
         }
 
         cadastroId = id
-        binding.tvTituloTela.text = "Editar cadastro"
+        binding.tvTituloTela.setText(R.string.editar_cadastro)
         val cadastro = cadastroHandler.findById(id)
 
         if (cadastro == null) {
-            Toast.makeText(this, "Cadastro não encontrado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -58,6 +62,8 @@ class CadastroActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        binding.etCellphone.addTextChangedListener(MaskUtil.maskCell(binding.etCellphone))
+
         binding.btSalvar.setOnClickListener {
             saveRegister()
         }
@@ -65,46 +71,62 @@ class CadastroActivity : AppCompatActivity() {
         binding.btCancelar.setOnClickListener {
             finish()
         }
+
+        binding.btDelete.setOnClickListener {
+            val id = cadastroId ?: return@setOnClickListener
+            val resultado = cadastroHandler.deleteById(id)
+
+            if (resultado > 0) {
+                Toast.makeText(this, R.string.cadastro_excluido_sucesso, Toast.LENGTH_SHORT).show()
+                finish()
+                return@setOnClickListener
+            }
+
+            Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun saveRegister() {
         val nome = binding.etNome.text.toString().trim()
-        val cellphone = binding.etCellphone.text.toString().trim()
+        val cellphoneRaw = binding.etCellphone.text.toString().trim()
+        val cellphoneUnmasked = MaskUtil.unmaskCell(cellphoneRaw)
 
         if (nome.isBlank()) {
-            binding.etNome.error = "Informe o nome"
+            binding.etNome.error = getString(R.string.informe_nome)
             binding.etNome.requestFocus()
             return
         }
 
-        if (cellphone.isBlank()) {
-            binding.etCellphone.error = "Informe o celular"
+        if (cellphoneUnmasked.isBlank()) {
+            binding.etCellphone.error = getString(R.string.informe_celular)
             binding.etCellphone.requestFocus()
             return
         }
 
         val cadastro = Cadastro(
-            id = cadastroId ?: 0, nome = nome, cellphone = cellphone
+            id = cadastroId ?: 0,
+            nome = nome,
+            cellphone = cellphoneUnmasked
         )
 
         if (cadastroId == null) {
             val resultado = cadastroHandler.insert(cadastro)
 
             if (resultado == -1L) {
-                Toast.makeText(this, "Erro ao salvar cadastro", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.erro_salvar_cadastro, Toast.LENGTH_SHORT).show()
                 return
             }
 
-            Toast.makeText(this, "Cadastro salvo com sucesso", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.cadastro_salvo_sucesso, Toast.LENGTH_SHORT).show()
         } else {
             val resultado = cadastroHandler.update(cadastro)
 
             if (resultado <= 0) {
-                Toast.makeText(this, "Cadastro não encontrado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
                 return
             }
 
-            Toast.makeText(this, "Cadastro atualizado com sucesso", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.cadastro_atualizado_sucesso, Toast.LENGTH_SHORT).show()
         }
 
         finish()

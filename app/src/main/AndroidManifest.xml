@@ -13,10 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Posutfprusingdb">
         <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".views.ListarActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

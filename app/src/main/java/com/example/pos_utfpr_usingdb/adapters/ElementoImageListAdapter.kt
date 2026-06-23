@@ -1,6 +1,7 @@
 package com.example.pos_utfpr_usingdb.adapters
 
 import android.content.Context
+import android.telephony.PhoneNumberUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import com.example.pos_utfpr_usingdb.databinding.ElementoImageListviewBinding
 import com.example.pos_utfpr_usingdb.entity.Cadastro
 
 class ElementoImageListAdapter(
-    context: Context,
+    private val context: Context,
     private val elements: MutableList<Cadastro>,
     private val onEditClick: (Cadastro, Int) -> Unit
 ) : BaseAdapter() {
@@ -47,8 +48,12 @@ class ElementoImageListAdapter(
 
         val item = getItem(position)
 
-        binding.tvNomeElementoLista.text = item.nome
-        binding.tvCellElementoLista.text = item.cellphone
+        binding.tvNomeElementoLista.text = context.getString(
+            R.string.cadastro_nome_com_id,
+            item.id,
+            item.nome
+        )
+        binding.tvCellElementoLista.text = PhoneNumberUtils.formatNumber(item.cellphone, "BR") ?: item.cellphone
 
         val avatarResource = if (position % 2 == 0) {
             android.R.drawable.star_big_on

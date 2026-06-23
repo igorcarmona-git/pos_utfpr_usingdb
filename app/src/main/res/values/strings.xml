@@ -1,20 +1,26 @@
 <resources>
     <string name="app_name">pos-utfpr-usingdb</string>
-    <string name="cod">Cod</string>
-    <string name="nome">Nome</string>
-    <string name="cellphone">Cellphone</string>
-    <string name="incluir">Incluir</string>
-    <string name="alterar">Alterar</string>
     <string name="deletar">Deletar</string>
     <string name="pesquisar">Pesquisar</string>
-    <string name="listar">Listar</string>
     <string name="person_avatar">Person Avatar</string>
     <string name="edit_icon_button">Edit Icon Button</string>
     <string name="novo_cadastro">Novo cadastro</string>
+    <string name="editar_cadastro">Editar cadastro</string>
+    <string name="id_do_cadastro">ID do cadastro</string>
+    <string name="cadastro_nome_com_id">#%1$d - %2$s</string>
     <string name="nome_do_cadastro">Nome do cadastro</string>
     <string name="celular_do_cadastro">Celular do cadastro</string>
     <string name="salvar">Salvar</string>
     <string name="cancelar">Cancelar</string>
     <string name="splash_screen">Cadastro de Pessoas</string>
     <string name="adicionar_novo_cadastro">Adicionar novo cadastro</string>
+    <string name="pesquisar_cadastro">Pesquisar cadastro</string>
+    <string name="informe_id_valido">Informe um ID válido</string>
+    <string name="informe_nome">Informe o nome</string>
+    <string name="informe_celular">Informe o celular</string>
+    <string name="cadastro_nao_encontrado">Cadastro não encontrado</string>
+    <string name="cadastro_salvo_sucesso">Cadastro salvo com sucesso</string>
+    <string name="cadastro_atualizado_sucesso">Cadastro atualizado com sucesso</string>
+    <string name="cadastro_excluido_sucesso">Cadastro excluído com sucesso</string>
+    <string name="erro_salvar_cadastro">Erro ao salvar cadastro</string>
 </resources>

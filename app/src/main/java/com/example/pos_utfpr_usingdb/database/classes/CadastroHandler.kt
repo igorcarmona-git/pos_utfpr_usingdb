@@ -10,7 +10,7 @@ import com.example.pos_utfpr_usingdb.entity.Cadastro
 class CadastroHandler(context: Context) : DatabaseHandler(context) {
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
-            "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_COD TEXT, $COL_NOME TEXT, $COL_CELLPHONE TEXT)"
+            "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NOME TEXT, $COL_CELLPHONE TEXT)"
         )
     }
 
@@ -31,20 +31,6 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
         }
         cursor.close()
         return registers
-    }
-
-    fun search(cod: String): Cadastro? {
-        val db = this.readableDatabase
-        val cursor = db.query(
-            TABLE_NAME, null, "$COL_COD = ?", arrayOf(cod), null, null, null
-        )
-
-        var cadastro: Cadastro? = null
-        if (cursor.moveToFirst()) {
-            cadastro = cursorToRegister(cursor)
-        }
-        cursor.close()
-        return cadastro
     }
 
     fun findById(id: Int): Cadastro? {
@@ -72,42 +58,29 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
 
         return dbUpdate(
             TABLE_NAME,
-            contentValuesRegister(cadastro, incluirCod = false),
+            contentValuesRegister(cadastro),
             "$COL_ID = ?",
             arrayOf(cadastro.id.toString())
         )
     }
 
-    // Métodos específicos para facilitar o uso na Activity, chamando os genéricos da base
-    fun incluirCadastro(values: ContentValues): Long {
-        return dbInsert(TABLE_NAME, values)
-    }
-
-    fun alterarCadastro(values: ContentValues, cod: String): Int {
-        return dbUpdate(TABLE_NAME, values, "$COL_COD = ?", arrayOf(cod))
-    }
-
-    fun deletarCadastro(cod: String): Int {
-        return dbDelete(TABLE_NAME, "$COL_COD = ?", arrayOf(cod))
+    fun deleteById(id: Int): Int {
+        if (id <= 0) {
+            return 0
+        }
+        return dbDelete(TABLE_NAME, "$COL_ID = ?", arrayOf(id.toString()))
     }
 
     private fun cursorToRegister(cursor: Cursor): Cadastro {
         return Cadastro(
             id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID)),
-            cod = cursor.getString(cursor.getColumnIndexOrThrow(COL_COD)) ?: "",
             nome = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOME)) ?: "",
             cellphone = cursor.getString(cursor.getColumnIndexOrThrow(COL_CELLPHONE)) ?: ""
         )
     }
 
-    private fun contentValuesRegister(
-        cadastro: Cadastro,
-        incluirCod: Boolean = true
-    ): ContentValues {
+    private fun contentValuesRegister(cadastro: Cadastro): ContentValues {
         return ContentValues().apply {
-            if (incluirCod) {
-                put(COL_COD, cadastro.cod)
-            }
             put(COL_NOME, cadastro.nome)
             put(COL_CELLPHONE, cadastro.cellphone)
         }
@@ -116,7 +89,6 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
     companion object {
         private const val TABLE_NAME = "cadastro"
         private const val COL_ID = "_id"
-        private const val COL_COD = "cod"
         private const val COL_NOME = "nome"
         private const val COL_CELLPHONE = "cellphone"
     }

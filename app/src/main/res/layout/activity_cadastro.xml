@@ -31,9 +31,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:autofillHints="Celular do cadastro"
+        android:autofillHints="phone"
         android:hint="@string/celular_do_cadastro"
         android:inputType="phone"
+        android:maxLength="15"
         android:minHeight="48dp"
         android:textColorHint="#546E7A" />
 
@@ -42,6 +43,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/salvar" />
+
+    <Button
+        android:id="@+id/bt_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@color/design_default_color_error"
+        android:text="@string/deletar"
+        android:textColor="@color/design_default_color_on_primary" />
 
     <Button
         android:id="@+id/bt_cancelar"

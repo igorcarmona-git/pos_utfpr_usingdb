@@ -2,10 +2,15 @@ package com.example.pos_utfpr_usingdb.views
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
+import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.pos_utfpr_usingdb.R
 import com.example.pos_utfpr_usingdb.adapters.ElementoImageListAdapter
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityListarBinding
@@ -14,7 +19,6 @@ class ListarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListarBinding
     private lateinit var cadastroHandler: CadastroHandler
 
-    //onCreate -> Cria os componentes visuais
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -28,23 +32,62 @@ class ListarActivity : AppCompatActivity() {
             insets
         }
 
-        binding.btIncluir.setOnClickListener {
-            val intent = Intent(this, CadastroActivity::class.java)
-            startActivity(intent)
-        }
+        cadastroHandler = CadastroHandler(this)
+        setupListeners()
     }
 
-    //onStart -> Carrega os dados para os componentes visuais
     override fun onStart() {
         super.onStart()
-        cadastroHandler = CadastroHandler(this)
         showList()
     }
 
-    // Ao retornar para esta tela após ela ter passado pelo onStop,
-    // o onResume é executado novamente e atualiza a lista exibida.
+    private fun setupListeners() {
+        binding.btIncluir.setOnClickListener {
+            openCadastro()
+        }
 
-    // onResume -> Interatividade da tela, toca a música do jogo, etc.
+        binding.btSearch.setOnClickListener {
+            showSearchDialog()
+        }
+    }
+
+    private fun showSearchDialog() {
+        val input = EditText(this).apply {
+            hint = getString(R.string.id_do_cadastro)
+            inputType = InputType.TYPE_CLASS_NUMBER
+            minHeight = resources.getDimensionPixelSize(R.dimen.dialog_input_min_height)
+            isSingleLine = true
+        }
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(R.string.pesquisar_cadastro).setView(input)
+            .setNegativeButton(R.string.cancelar, null)
+            .setPositiveButton(R.string.pesquisar, null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val id = input.text.toString().trim().toIntOrNull()
+                if (id == null || id <= 0) {
+                    input.error = getString(R.string.informe_id_valido)
+                    input.requestFocus()
+                    return@setOnClickListener
+                }
+
+                val cadastro = cadastroHandler.findById(id)
+                if (cadastro == null) {
+                    Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT)
+                        .show()
+                    return@setOnClickListener
+                }
+
+                dialog.dismiss()
+                openCadastro(cadastro.id)
+            }
+        }
+
+        dialog.show()
+    }
 
     private fun showList() {
         val cadastros = cadastroHandler.list()
@@ -52,11 +95,17 @@ class ListarActivity : AppCompatActivity() {
         val adapter = ElementoImageListAdapter(
             context = this, elements = cadastros
         ) { cadastro, _ ->
-            val intent = Intent(this, CadastroActivity::class.java)
-            intent.putExtra(CadastroActivity.EXTRA_CADASTRO_ID, cadastro.id)
-            startActivity(intent)
+            openCadastro(cadastro.id)
         }
 
         binding.lvCadastro.adapter = adapter
+    }
+
+    private fun openCadastro(cadastroId: Int? = null) {
+        val intent = Intent(this, CadastroActivity::class.java)
+        if (cadastroId != null) {
+            intent.putExtra(CadastroActivity.EXTRA_CADASTRO_ID, cadastroId)
+        }
+        startActivity(intent)
     }
 }
