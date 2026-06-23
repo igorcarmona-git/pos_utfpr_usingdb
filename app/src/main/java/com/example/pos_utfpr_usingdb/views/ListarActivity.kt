@@ -52,40 +52,33 @@ class ListarActivity : AppCompatActivity() {
     }
 
     private fun showSearchDialog() {
-        val input = EditText(this).apply {
+        val inputEtCod = EditText(this).apply {
             hint = getString(R.string.id_do_cadastro)
             inputType = InputType.TYPE_CLASS_NUMBER
-            minHeight = resources.getDimensionPixelSize(R.dimen.dialog_input_min_height)
-            isSingleLine = true
         }
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle(R.string.pesquisar_cadastro).setView(input)
-            .setNegativeButton(R.string.cancelar, null)
-            .setPositiveButton(R.string.pesquisar, null)
-            .create()
 
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                val id = input.text.toString().trim().toIntOrNull()
-                if (id == null || id <= 0) {
-                    input.error = getString(R.string.informe_id_valido)
-                    input.requestFocus()
-                    return@setOnClickListener
-                }
+        dialog.setTitle(R.string.pesquisar_cadastro)
+        dialog.setView(inputEtCod)
+        dialog.setNegativeButton(R.string.cancelar, null)
+        dialog.setPositiveButton(R.string.pesquisar) { _, _ ->
+            val id = inputEtCod.text.toString().trim().toIntOrNull()
 
-                val cadastro = cadastroHandler.findById(id)
-                if (cadastro == null) {
-                    Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT)
-                        .show()
-                    return@setOnClickListener
-                }
+            if (id == null || id <= 0) {
+                Toast.makeText(this, R.string.informe_id_valido, Toast.LENGTH_SHORT).show()
+                
+                // Retorna a execução do método para evitar que o cadastro seja aberto
+                return@setPositiveButton
+            }
 
-                dialog.dismiss()
+            val cadastro = cadastroHandler.findById(id)
+            if (cadastro == null) {
+                Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+            } else {
                 openCadastro(cadastro.id)
             }
         }
-
         dialog.show()
     }
 
