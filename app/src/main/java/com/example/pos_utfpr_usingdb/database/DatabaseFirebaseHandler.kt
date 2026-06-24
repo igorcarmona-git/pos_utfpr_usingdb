@@ -27,9 +27,9 @@ class DatabaseFirebaseHandler {
         cadastro.id = docRef.id
 
         val data = hashMapOf(
-            "id" to cadastro.id,
-            "nome" to cadastro.nome,
-            "telefone" to cadastro.cellphone
+            DB_CADASTRO_ID to cadastro.id,
+            DB_CADASTRO_NOME to cadastro.nome,
+            DB_CADASTRO_CELLPHONE to cadastro.cellphone
         )
 
         docRef.set(data)
@@ -43,9 +43,9 @@ class DatabaseFirebaseHandler {
             .addOnSuccessListener { result ->
                 val list = result.map { document ->
                     Cadastro(
-                        id = document.getString("id") ?: document.id,
-                        nome = document.getString("nome") ?: "",
-                        cellphone = document.getString("telefone") ?: ""
+                        id = document.getString(DB_CADASTRO_ID) ?: document.id,
+                        nome = document.getString(DB_CADASTRO_NOME) ?: "",
+                        cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
                     )
                 }
                 onSuccess(list)
@@ -72,9 +72,11 @@ class DatabaseFirebaseHandler {
             .addOnSuccessListener { document ->
                 if (document.exists()) {
                     val cadastro = Cadastro(
-                        id = document.getString("id") ?: document.id,
-                        nome = document.getString("nome") ?: "",
-                        cellphone = document.getString("telefone") ?: ""
+                        id = document.getString(
+                            DB_CADASTRO_ID
+                        ) ?: document.id,
+                        nome = document.getString(DB_CADASTRO_NOME) ?: "",
+                        cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
                     )
                     onSuccess(cadastro)
                 } else {
@@ -82,5 +84,11 @@ class DatabaseFirebaseHandler {
                 }
             }
             .addOnFailureListener { e -> onFailure(e) }
+    }
+
+    companion object {
+        internal const val DB_CADASTRO_ID = "id"
+        internal const val DB_CADASTRO_NOME = "nome"
+        internal const val DB_CADASTRO_CELLPHONE = "telefone"
     }
 }
