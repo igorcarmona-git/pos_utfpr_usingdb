@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
+//Lógica de CRUD de database no SQLite
 abstract class DatabaseHandler(context: Context) :
     SQLiteOpenHelper(context, DB_NAME, null, DB_VERSION) {
     abstract override fun onUpgrade(db: SQLiteDatabase?, oldDBVersion: Int, newDBVersion: Int)

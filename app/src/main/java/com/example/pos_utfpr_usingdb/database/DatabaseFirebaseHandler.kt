@@ -4,6 +4,7 @@ import com.example.pos_utfpr_usingdb.entity.Cadastro
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 
+//Lógica de CRUD de database no Firebase
 class DatabaseFirebaseHandler {
     private val db = Firebase.firestore
 
