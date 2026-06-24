@@ -23,7 +23,6 @@ class DatabaseFirebaseHandler {
             collection.document(cadastro.id)
         }
 
-        // Atualiza o objeto cadastro com o ‘ID’ gerado ou existente
         cadastro.id = docRef.id
 
         val data = hashMapOf(
