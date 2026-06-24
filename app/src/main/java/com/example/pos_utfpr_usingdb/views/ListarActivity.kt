@@ -12,12 +12,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pos_utfpr_usingdb.R
 import com.example.pos_utfpr_usingdb.adapters.ElementoImageListAdapter
+import com.example.pos_utfpr_usingdb.database.DatabaseFirebaseHandler
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityListarBinding
 
 class ListarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListarBinding
     private lateinit var cadastroHandler: CadastroHandler
+    private val db = DatabaseFirebaseHandler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +56,7 @@ class ListarActivity : AppCompatActivity() {
     private fun showSearchDialog() {
         val inputEtCod = EditText(this).apply {
             hint = getString(R.string.id_do_cadastro)
-            inputType = InputType.TYPE_CLASS_NUMBER
+            inputType = InputType.TYPE_CLASS_TEXT
         }
 
         val dialog = AlertDialog.Builder(this)
@@ -63,38 +65,48 @@ class ListarActivity : AppCompatActivity() {
         dialog.setView(inputEtCod)
         dialog.setNegativeButton(R.string.cancelar, null)
         dialog.setPositiveButton(R.string.pesquisar) { _, _ ->
-            val id = inputEtCod.text.toString().trim().toIntOrNull()
+            val id = inputEtCod.text.toString().trim()
 
-            if (id == null || id <= 0) {
+            if (id.isEmpty()) {
                 Toast.makeText(this, R.string.informe_id_valido, Toast.LENGTH_SHORT).show()
-                
-                // Retorna a execução do método para evitar que o cadastro seja aberto
                 return@setPositiveButton
             }
 
-            val cadastro = cadastroHandler.findById(id)
-            if (cadastro == null) {
-                Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
-            } else {
-                openCadastro(cadastro.id)
-            }
+            db.findById(id,
+                onSuccess = { cadastro ->
+                    if (cadastro == null) {
+                        Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+                    } else {
+                        openCadastro(cadastro.id)
+                    }
+                },
+                onFailure = { e ->
+                    Toast.makeText(this, "Erro ao pesquisar: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
         dialog.show()
     }
 
     private fun showList() {
-        val cadastros = cadastroHandler.list()
-
-        val adapter = ElementoImageListAdapter(
-            context = this, elements = cadastros
-        ) { cadastro, _ ->
-            openCadastro(cadastro.id)
-        }
-
-        binding.lvCadastro.adapter = adapter
+        db.list(
+            onSuccess = { results ->
+                val adapter = ElementoImageListAdapter(
+                    context = this,
+                    elements = results.toMutableList()
+                ) { cadastro, _ ->
+                    openCadastro(cadastro.id)
+                }
+                binding.lvCadastro.adapter = adapter
+            },
+            onFailure = { e ->
+                Toast.makeText(this, "Erro ao carregar lista: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        )
     }
 
-    private fun openCadastro(cadastroId: Int? = null) {
+    private fun openCadastro(cadastroId: String? = null) {
         val intent = Intent(this, CadastroActivity::class.java)
         if (cadastroId != null) {
             intent.putExtra(CadastroActivity.EXTRA_CADASTRO_ID, cadastroId)

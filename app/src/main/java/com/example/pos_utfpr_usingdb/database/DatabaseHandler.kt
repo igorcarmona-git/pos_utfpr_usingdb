@@ -30,6 +30,6 @@ abstract class DatabaseHandler(context: Context) :
     // para que o onUpgrade seja chamado e a tabela, seja atualizada
     companion object {
         const val DB_NAME = "banco.db"
-        const val DB_VERSION = 1
+        const val DB_VERSION = 2
     }
 }

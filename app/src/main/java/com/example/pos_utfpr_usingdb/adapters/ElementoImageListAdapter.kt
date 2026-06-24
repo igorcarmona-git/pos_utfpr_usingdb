@@ -26,7 +26,7 @@ class ElementoImageListAdapter(
     }
 
     override fun getItemId(position: Int): Long {
-        return elements[position].id.toLong()
+        return position.toLong()
     }
 
     override fun getView(

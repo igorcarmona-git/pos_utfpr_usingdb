@@ -7,7 +7,7 @@
     <string name="novo_cadastro">Novo cadastro</string>
     <string name="editar_cadastro">Editar cadastro</string>
     <string name="id_do_cadastro">ID do cadastro</string>
-    <string name="cadastro_nome_com_id">#%1$d - %2$s</string>
+    <string name="cadastro_nome_com_id">#%1$s - %2$s</string>
     <string name="nome_do_cadastro">Nome do cadastro</string>
     <string name="celular_do_cadastro">Celular do cadastro</string>
     <string name="salvar">Salvar</string>

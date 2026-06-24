@@ -10,7 +10,8 @@ import com.example.pos_utfpr_usingdb.entity.Cadastro
 class CadastroHandler(context: Context) : DatabaseHandler(context) {
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
-            "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID INTEGER PRIMARY KEY AUTOINCREMENT, $COL_NOME TEXT, $COL_CELLPHONE TEXT)"
+            "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COL_ID TEXT PRIMARY KEY, " +
+                    "$COL_NOME TEXT, $COL_CELLPHONE TEXT)"
         )
     }
 
@@ -33,10 +34,10 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
         return registers
     }
 
-    fun findById(id: Int): Cadastro? {
+    fun findById(id: String): Cadastro? {
         val db = this.readableDatabase
         val cursor = db.query(
-            TABLE_NAME, null, "$COL_ID = ?", arrayOf(id.toString()), null, null, null
+            TABLE_NAME, null, "$COL_ID = ?", arrayOf(id), null, null, null
         )
 
         var cadastro: Cadastro? = null
@@ -52,7 +53,7 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
     }
 
     fun update(cadastro: Cadastro): Int {
-        if (cadastro.id <= 0) {
+        if (cadastro.id.isEmpty()) {
             return 0
         }
 
@@ -60,20 +61,21 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
             TABLE_NAME,
             contentValuesRegister(cadastro),
             "$COL_ID = ?",
-            arrayOf(cadastro.id.toString())
+            arrayOf(cadastro.id)
         )
     }
 
-    fun deleteById(id: Int): Int {
-        if (id <= 0) {
+    fun deleteById(id: String): Int {
+        if (id.isEmpty()) {
             return 0
         }
-        return dbDelete(TABLE_NAME, "$COL_ID = ?", arrayOf(id.toString()))
+        return dbDelete(TABLE_NAME, "$COL_ID = ?", arrayOf(id))
     }
 
     private fun cursorToRegister(cursor: Cursor): Cadastro {
         return Cadastro(
-            id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID)),
+            // Alterado de getInt para getString
+            id = cursor.getString(cursor.getColumnIndexOrThrow(COL_ID)),
             nome = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOME)) ?: "",
             cellphone = cursor.getString(cursor.getColumnIndexOrThrow(COL_CELLPHONE)) ?: ""
         )
@@ -81,6 +83,7 @@ class CadastroHandler(context: Context) : DatabaseHandler(context) {
 
     private fun contentValuesRegister(cadastro: Cadastro): ContentValues {
         return ContentValues().apply {
+            put(COL_ID, cadastro.id)
             put(COL_NOME, cadastro.nome)
             put(COL_CELLPHONE, cadastro.cellphone)
         }

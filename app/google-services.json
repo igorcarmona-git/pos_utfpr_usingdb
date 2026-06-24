@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "737501594089",
+    "project_id": "pos-utfpr-usingdb-2026",
+    "storage_bucket": "pos-utfpr-usingdb-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737501594089:android:bce5f4be321ef99bec4b78",
+        "android_client_info": {
+          "package_name": "com.example.pos_utfpr_usingdb"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfluBwWeBcCw5JqorEDUu9otbvYFJkZcs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.pos_utfpr_usingdb.R
+import com.example.pos_utfpr_usingdb.database.DatabaseFirebaseHandler
 import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityCadastroBinding
 import com.example.pos_utfpr_usingdb.entity.Cadastro
@@ -16,8 +17,9 @@ import com.example.pos_utfpr_usingdb.utils.MaskUtil
 class CadastroActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCadastroBinding
     private lateinit var cadastroHandler: CadastroHandler
-
-    private var cadastroId: Int? = null
+    private val db = DatabaseFirebaseHandler()
+    
+    private var cadastroId: String? = null // Mudado para String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +41,9 @@ class CadastroActivity : AppCompatActivity() {
     }
 
     private fun loadRegisterToEdit() {
-        val id = intent.getIntExtra(EXTRA_CADASTRO_ID, -1)
+        val id = intent.getStringExtra(EXTRA_CADASTRO_ID)
 
-        if (id <= 0) {
+        if (id.isNullOrEmpty()) {
             binding.tvTituloTela.setText(R.string.novo_cadastro)
             binding.btDelete.visibility = View.GONE
             return
@@ -49,16 +51,22 @@ class CadastroActivity : AppCompatActivity() {
 
         cadastroId = id
         binding.tvTituloTela.setText(R.string.editar_cadastro)
-        val cadastro = cadastroHandler.findById(id)
-
-        if (cadastro == null) {
-            Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
-            finish()
-            return
-        }
-
-        binding.etNome.setText(cadastro.nome)
-        binding.etCellphone.setText(cadastro.cellphone)
+        
+        db.findById(id,
+            onSuccess = { cadastro ->
+                if (cadastro == null) {
+                    Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    binding.etNome.setText(cadastro.nome)
+                    binding.etCellphone.setText(cadastro.cellphone)
+                }
+            },
+            onFailure = { e ->
+                Toast.makeText(this, "Erro ao carregar dados: ${e.message}", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        )
     }
 
     private fun setupListeners() {
@@ -74,15 +82,22 @@ class CadastroActivity : AppCompatActivity() {
 
         binding.btDelete.setOnClickListener {
             val id = cadastroId ?: return@setOnClickListener
-            val resultado = cadastroHandler.deleteById(id)
 
-            if (resultado > 0) {
-                Toast.makeText(this, R.string.cadastro_excluido_sucesso, Toast.LENGTH_SHORT).show()
-                finish()
-                return@setOnClickListener
-            }
-
-            Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+            db.delete(
+                id,
+                onSuccess = {
+                    Toast.makeText(this, R.string.cadastro_excluido_sucesso, Toast.LENGTH_SHORT)
+                        .show()
+                    finish()
+                },
+                onFailure = { e ->
+                    Toast.makeText(
+                        this,
+                        "${getString(R.string.erro_salvar_cadastro)}: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
         }
     }
 
@@ -103,33 +118,30 @@ class CadastroActivity : AppCompatActivity() {
             return
         }
 
+        // Criamos o objeto Cadastro. Se cadastroId for null, id será "" (vazio)
         val cadastro = Cadastro(
-            id = cadastroId ?: 0,
+            id = cadastroId ?: "",
             nome = nome,
             cellphone = cellphoneUnmasked
         )
 
-        if (cadastroId == null) {
-            val resultado = cadastroHandler.insert(cadastro)
+        val successMessage = if (cadastroId == null) R.string.cadastro_salvo_sucesso else R.string.cadastro_atualizado_sucesso
 
-            if (resultado == -1L) {
-                Toast.makeText(this, R.string.erro_salvar_cadastro, Toast.LENGTH_SHORT).show()
-                return
+        // O DatabaseFirebaseHandler cuidará de gerar o ID se cadastro.id estiver vazio
+        db.save(
+            cadastro,
+            onSuccess = {
+                Toast.makeText(this, successMessage, Toast.LENGTH_SHORT).show()
+                finish()
+            },
+            onFailure = { e ->
+                Toast.makeText(
+                    this,
+                    "${getString(R.string.erro_salvar_cadastro)}: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-
-            Toast.makeText(this, R.string.cadastro_salvo_sucesso, Toast.LENGTH_SHORT).show()
-        } else {
-            val resultado = cadastroHandler.update(cadastro)
-
-            if (resultado <= 0) {
-                Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            Toast.makeText(this, R.string.cadastro_atualizado_sucesso, Toast.LENGTH_SHORT).show()
-        }
-
-        finish()
+        )
     }
 
     companion object {
