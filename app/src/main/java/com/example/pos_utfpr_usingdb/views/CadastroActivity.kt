@@ -19,7 +19,7 @@ class CadastroActivity : AppCompatActivity() {
     private lateinit var cadastroHandler: CadastroHandler
     private val db = DatabaseFirebaseHandler()
     
-    private var cadastroId: String? = null // Mudado para String
+    private var cadastroId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

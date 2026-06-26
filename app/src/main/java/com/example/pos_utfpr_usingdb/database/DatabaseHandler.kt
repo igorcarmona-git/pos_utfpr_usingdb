@@ -27,7 +27,7 @@ abstract class DatabaseHandler(context: Context) :
         return db.delete(tableName, whereClause, whereArgs)
     }
 
-    //Sempre que for inserir uma nova coluna numa tabela, é necessário atualizar o DB_VERSION
+    // Sempre que for inserir uma nova coluna numa tabela, é necessário atualizar o DB_VERSION
     // para que o onUpgrade seja chamado e a tabela, seja atualizada
     companion object {
         const val DB_NAME = "banco.db"

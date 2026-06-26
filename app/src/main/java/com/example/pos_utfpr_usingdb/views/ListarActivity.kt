@@ -13,12 +13,15 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.pos_utfpr_usingdb.R
 import com.example.pos_utfpr_usingdb.adapters.ElementoImageListAdapter
 import com.example.pos_utfpr_usingdb.database.DatabaseFirebaseHandler
-import com.example.pos_utfpr_usingdb.database.classes.CadastroHandler
 import com.example.pos_utfpr_usingdb.databinding.ActivityListarBinding
 
 class ListarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListarBinding
-    private lateinit var cadastroHandler: CadastroHandler
+
+    // Esse cadastroHandler eu estou a utilizar funçcoes do SQLite, mas agora eu estou usando
+    // Firebase, deixei aqui mais para estudo
+
+    // private lateinit var cadastroHandler: CadastroHandler
     private val db = DatabaseFirebaseHandler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +37,7 @@ class ListarActivity : AppCompatActivity() {
             insets
         }
 
-        cadastroHandler = CadastroHandler(this)
+//        cadastroHandler = CadastroHandler(this)
         setupListeners()
     }
 
@@ -72,16 +75,19 @@ class ListarActivity : AppCompatActivity() {
                 return@setPositiveButton
             }
 
-            db.findById(id,
+            db.findById(
+                id,
                 onSuccess = { cadastro ->
                     if (cadastro == null) {
-                        Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.cadastro_nao_encontrado, Toast.LENGTH_SHORT)
+                            .show()
                     } else {
                         openCadastro(cadastro.id)
                     }
                 },
                 onFailure = { e ->
-                    Toast.makeText(this, "Erro ao pesquisar: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Erro ao pesquisar: ${e.message}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             )
         }

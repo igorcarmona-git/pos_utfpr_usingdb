@@ -9,81 +9,64 @@ class DatabaseFirebaseHandler {
     private val db = Firebase.firestore
 
     fun save(
-        cadastro: Cadastro,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
+        cadastro: Cadastro, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit
     ) {
         val collection = db.collection("cadastro")
 
-        // Se o ‘id’ estiver vazio, gera um novo DocumentReference com ‘ID’ automático
-        val docRef = if (cadastro.id.isEmpty()) {
-            val autoId = collection.document().id
-            val shortId = if (autoId.length >= 4) autoId.substring(0, 4) else autoId
-            collection.document(shortId)
+        val docRef = if (cadastro.id.isBlank()) {
+            collection.document()
         } else {
             collection.document(cadastro.id)
         }
 
-        cadastro.id = docRef.id
-
         val data = hashMapOf(
-            DB_CADASTRO_ID to cadastro.id,
+            DB_CADASTRO_ID to docRef.id,
             DB_CADASTRO_NOME to cadastro.nome,
             DB_CADASTRO_CELLPHONE to cadastro.cellphone
         )
 
-        docRef.set(data)
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { e -> onFailure(e) }
+        docRef.set(data).addOnSuccessListener {
+            onSuccess(docRef.id)
+        }.addOnFailureListener { e ->
+            onFailure(e)
+        }
     }
 
     fun list(onSuccess: (List<Cadastro>) -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("cadastro")
-            .get()
-            .addOnSuccessListener { result ->
-                val list = result.map { document ->
-                    Cadastro(
-                        id = document.getString(DB_CADASTRO_ID) ?: document.id,
-                        nome = document.getString(DB_CADASTRO_NOME) ?: "",
-                        cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
-                    )
-                }
-                onSuccess(list)
+        db.collection("cadastro").get().addOnSuccessListener { result ->
+            val list = result.map { document ->
+                Cadastro(
+                    id = document.getString(DB_CADASTRO_ID) ?: document.id,
+                    nome = document.getString(DB_CADASTRO_NOME) ?: "",
+                    cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
+                )
             }
-            .addOnFailureListener { e -> onFailure(e) }
+            onSuccess(list)
+        }.addOnFailureListener { e -> onFailure(e) }
     }
 
     fun delete(
-        id: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
+        id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit
     ) {
-        db.collection("cadastro")
-            .document(id)
-            .delete()
-            .addOnSuccessListener { onSuccess() }
+        db.collection("cadastro").document(id).delete().addOnSuccessListener { onSuccess() }
             .addOnFailureListener { e -> onFailure(e) }
     }
 
     fun findById(id: String, onSuccess: (Cadastro?) -> Unit, onFailure: (Exception) -> Unit) {
-        db.collection("cadastro")
-            .document(id)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val cadastro = Cadastro(
-                        id = document.getString(
-                            DB_CADASTRO_ID
-                        ) ?: document.id,
-                        nome = document.getString(DB_CADASTRO_NOME) ?: "",
-                        cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
-                    )
-                    onSuccess(cadastro)
-                } else {
-                    onSuccess(null)
-                }
+        db.collection("cadastro").document(id).get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val cadastro = Cadastro(
+                    id = document.getString(
+                        DB_CADASTRO_ID
+                    ) ?: document.id,
+                    nome = document.getString(DB_CADASTRO_NOME) ?: "",
+                    cellphone = document.getString(DB_CADASTRO_CELLPHONE) ?: ""
+                )
+                onSuccess(cadastro)
+            } else {
+                onSuccess(null)
             }
-            .addOnFailureListener { e -> onFailure(e) }
+        }.addOnFailureListener { e -> onFailure(e) }
     }
 
     companion object {
